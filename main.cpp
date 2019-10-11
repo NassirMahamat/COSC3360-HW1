@@ -1,253 +1,189 @@
 //
 //  main.cpp
-//  CompXC2.0
+//  HW5.0
 //
-//  Created by Hasan Qureshi on 9/15/19.
+//  Created by Hasan Qureshi on 9/23/19.
 //  Copyright © 2019 Hasan Qureshi. All rights reserved.
 //
 
+#include <stdio.h>
 #include <iostream>
-#include <cstring>
-#include <fstream>
 #include <vector>
 #include <unistd.h>
+#include <string>
+#include <cstring>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <fstream>
+
 
 using namespace std;
 
-struct Encrypt{
-    char letter;
-    string cMess;
-};
-vector<char> nString;//str in vector form
-vector<char> nString2;//str temporary
-
-struct Data{
-    char letter;
+struct freq{
+    char letter='\0';
     int frequency = 0;
 };
-vector<Data> vData;//sorted already
 
-// parent process
-void bubbleSort(vector<Data> &vData) // sort vector
-{
-    for(int i = 1; i < vData.size(); i++)
-    {
-        for(int j = 0; j < vData.size()-i; j++)
-        {
-            if(vData.at(j).frequency < vData.at(j+1).frequency)
-            {
-                Data temp = vData.at(j);
-                vData.at(j) = vData.at(j+1);
-                vData.at(j+1) = temp;
-            }
-        }
-    }
-    for(int i=0 ;i<26;i++){
-        if(vData[i].frequency>0){
-           // vData.push_back(vData[i]);//
-        }
-    }
-}
+struct huffman{
+    string que,huff;
+};
 
-int main(){
-    
-    string str;
-    str="ZZZZZJFFJJKFSEJ";//nString
-    //find a way to read from a standard input
-    Data data[26];
-    Encrypt ENCRYPTION[100];
-    data[0].letter = 'A';
-    data[1].letter = 'B';
-    data[2].letter = 'C';
-    data[3].letter = 'D';
-    data[4].letter = 'E';
-    data[5].letter = 'F';
-    data[6].letter = 'G';
-    data[7].letter = 'H';
-    data[8].letter = 'I';
-    data[9].letter = 'J';
-    data[10].letter = 'K';
-    data[11].letter = 'L';
-    data[12].letter = 'M';
-    data[13].letter = 'N';
-    data[14].letter = 'O';
-    data[15].letter = 'P';
-    data[16].letter = 'Q';
-    data[17].letter = 'R';
-    data[18].letter = 'S';
-    data[19].letter = 'T';
-    data[20].letter = 'U';
-    data[21].letter = 'V';
-    data[22].letter = 'W';
-    data[23].letter = 'X';
-    data[24].letter = 'Y';
-    data[25].letter = 'Z';
 
-    for(int i = 0; i < str.size(); i++)
-    {
-        nString.push_back(str[i]);
-        if (str[i] == 'A')
-        {
-            data[0].frequency++;
-        }
-        else if (str[i] == 'B')
-        {
-            data[1].frequency++;
-        }
-        else if (str[i] == 'C')
-        {
-            data[2].frequency++;
-        }
-        else if (str[i] == 'D')
-        {
-            data[3].frequency++;
-        }
-        else if (str[i] == 'E')
-        {
-            data[4].frequency++;
-        }
-        else if (str[i] == 'F')
-        {
-            data[5].frequency++;
-        }
-        else if (str[i] == 'G')
-        {
-            data[6].frequency++;
-        }
-        else if (str[i] == 'H')
-        {
-            data[7].frequency++;
-        }
-        else if (str[i] == 'I')
-        {
-            data[8].frequency++;
-        }
-        else if (str[i] == 'J')
-        {
-            data[9].frequency++;
-        }
-        else if (str[i] == 'K')
-        {
-            data[10].frequency++;
-        }
-        else if (str[i] == 'L')
-        {
-            data[11].frequency++;
-        }
-        else if (str[i] == 'M')
-        {
-            data[12].frequency++;
-        }
-        else if (str[i] == 'N')
-        {
-            data[13].frequency++;
-        }
-        else if (str[i] == 'O')
-        {
-            data[14].frequency++;
-        }
-        else if (str[i] == 'P')
-        {
-            data[15].frequency++;
-        }
-        else if (str[i] == 'Q')
-        {
-            data[16].frequency++;
-        }
-        else if (str[i] == 'R')
-        {
-            data[17].frequency++;
-        }
-        else if (str[i] == 'S')
-        {
-            data[18].frequency++;
-        }
-        else if (str[i] == 'T')
-        {
-            data[19].frequency++;
-        }
-        else if (str[i] == 'U')
-        {
-            data[20].frequency++;
-        }
-        else if (str[i] == 'V')
-        {
-            data[21].frequency++;
-        }
-        else if (str[i] == 'W')
-        {
-            data[22].frequency++;
-        }
-        else if (str[i] == 'X')
-        {
-            data[23].frequency++;
-        }
-        else if (str[i] == 'Y')
-        {
-            data[24].frequency++;
-        }
-        else if (str[i] == 'Z')
-        {
-            data[25].frequency++;
-        }
-    }
+string mapH(string huff1,char toBeMapped);
+string reduction(string huff1, string outMap);
+string getInput();
+
+int main(int argc,char *argv[]){
+    //cout<<argv[1]<<endl;
+    //string str= "NOW IS THE WINTER OF OUR DISCONTENT"
+    cout<<"Begin execution"<<endl;
+    string str="";
     
-    for(int i=0;i<26;i++){
-        if(data[i].frequency>0){
-        cout<<"The frequency of "<<data[i].letter<<" is "<<data[i].frequency<<endl;
-        vData.push_back(data[i]);
-        }
-    }
-    cout<<endl;
-    
-    for(int i; i<vData.size();i++){
-        cout<<vData[i].letter<<" "<<vData[i].frequency<<endl;
-    }
-    
-    bubbleSort(vData);
-    
-    for(int i;i<vData.size();i++){
-        cout<<"The frequency of "<<vData[i].letter<<" is "<<vData[i].frequency<<endl;
-        }
-    cout<<endl;
-    
-    for(int i; i <nString.size();i++){
-            cout<<nString[i];
-        }
-        cout<<endl;
-    
-    for(int i = 0; i < vData.size(); i++)//step 4 comparison
-    {
-        ENCRYPTION[i].letter = vData[i].letter;
-            for(int j = 0; j < nString.size(); i++)
-            {
-                if(nString[i] == vData[i].letter)
-                {
-                    ENCRYPTION[i].cMess +='1';
-                }
-                else
-                {
-                    ENCRYPTION[i].cMess +='0';
-                }
-                
-            //child process.
-                for(int k=0; k<nString.size(); k++){
-                    if(nString[k]!=vData[k].letter){
-                        nString2.push_back(nString[k]);//add to nString2
-                }
-                    nString.clear();//delete nString contents
-                    
-                for(int j=0;j<nString2.size();j++){
-                        nString.push_back(nString2[j]);//push back into nString
-                    }
-                    nString2.clear();//clear nString2
-                    cout<<nString[k]<<" ";
-                }
-            }
+    //getline(cin,str);
+    str=getInput();
+
         
+    char Cstr[str.length()+1];
+    strcpy(Cstr,str.c_str());
+    cout<<endl;
+    
+    freq freq1[str.length()+1];
+    //freq swapHolder;
+    huffman encode[str.length()+1];
+    
+    for(int i=0; i<str.length();i++){
+       // cout<<Cstr[i];
+    }
+    cout<<endl;
+        
+    for(int i=0;i<str.length();i++){
+        for(int j=0;sizeof(freq1);j++){
+            if(freq1[j].letter=='\0'){
+                freq1[j].letter=Cstr[i];
+                freq1[j].frequency++;
+               // cout<<"found ";
+                //cout<<Cstr[i]<<endl;
+                break;
+            }
+            else if(Cstr[i]==freq1[j].letter){
+                freq1[j].frequency++;
+                break;
+            }
+        }
+    }//DICTIONARY
+ 
+    int zz=0;
+    for(int z=0;z<str.length();z++){
+        if(freq1[z].letter=='\0'){
+            break;
+        }
+        //cout<<z+1<<" - "<<freq1[z].letter<<" - "<<freq1[z].frequency<<endl;
+        zz=z+1;
     }
   
-
-    return 0;
+   for(int i=0;i< zz-1;i++)
+   {
+       for(int j=0; j < str.size(); j++)
+       {
+           if(freq1[j].frequency < freq1[j+1].frequency)
+           {
+               freq swapHolder = {freq1[j].letter,freq1[j].frequency};
+               freq1[j] ={freq1[j+1].letter,freq1[j+1].frequency};
+               freq1[j+1]={swapHolder.letter,swapHolder.frequency};
+           }
+       }
+   }
+    for(int z=0;z < freq1[z].letter; z++){
+       cout<<freq1[z].letter<<" frequency is "<<freq1[z].frequency<<endl;
+   }
     
+    encode[0].que={str};
+    encode[0].huff={mapH(encode[0].que, freq1[0].letter)};
+    //cout<<"child process 2 is doing task 2"<<getpid()<<endl;
+    cout<<endl;
+    wait(0);
+    //cout<<encode[0].huff<<endl;//created a new huff from key letter
+    
+    for(int t=1;t<zz;t++){
+        encode[t].que={reduction(encode[t-1].que,encode[t-1].huff)};
+        //cout<<encode[t-1].que<<endl;
+        encode[t].huff={mapH(encode[t].que, freq1[t].letter)};
+        //cout<<"TRACE 3 "<<t<<" "<<encode[t].huff<<" "<<freq1[t].letter<<endl;
+       // cout<<t<<" "<<encode[t].huff<<" "<<freq1[t].letter<<endl;
+    }
+    //cout<<"child process 3 is doing task 3"<<getpid()<<endl;
+    cout<<endl;
+    sleep(0);
+    pid_t pid;
+    cout<<"Original message: "<<encode[0].que<<endl;
+    for(int i=1;i<zz;i++){
+        pid = fork();
+        if(pid == 0){
+            cout<<"Symbol "<< freq1[i].letter<<" code: "<<encode[i].huff<<endl;
+            cout<<"Remiaining code: "<<encode[i+1].que<<endl;
+            exit(0);
+        }
+            //cout<<"Remiaining code: "<<encode[i].que<<endl;
+            //cout<<"Symbol "<< freq1[i].letter<<" code "<<encode[i].huff<<endl;
+        }  //cout<<freq1[i].letter<<endl;
+        wait(0);
+     
+     cout<<endl;
+
+    
+return 0;
 }
+
+string getInput(){
+    
+    string Input="";
+    string str;
+    string InputTemp="";
+    while (getline(cin,InputTemp)){
+        Input+=InputTemp;
+        Input+= '\r';
+        if(InputTemp.length()==0)
+            break;
+    };
+    str=Input;
+    return str;
+}
+
+string mapH(string huff1,char toBeMapped){
+        string outMap="";
+        char wStr[huff1.length()];
+        strcpy(wStr,huff1.c_str());
+        for(int i=0;i<huff1.length();i++){
+            //cout<<huff1.substr(i,1)<<endl;// indexes through the ith element of the string
+          //  cout<<wStr[i]<<endl;
+            if(wStr[i]==toBeMapped){
+                outMap+="1";
+            }
+            else{
+                outMap+="0";
+            }
+        }
+        return outMap;
+}
+
+string reduction(string que, string mapH){
+   // for debugging cout<<"TRACE 1 "<<que<<" "<<mapH<<endl;
+    string redMap="";
+        char rStr[que.length()];
+        strcpy(rStr,que.c_str());//compair
+        char mStr[mapH.length()];
+        strcpy(mStr,mapH.c_str());//compair
+        for(int i=0;i<que.length();i++){
+            //cout<<huff1.substr(i,1)<<endl;// indexes through the ith element of the string
+            //cout<<wStr[i]<<endl;
+            //mStr copy
+           // for debugging cout<<"TRACE 2 "<<i << " "<<rStr[i]<<" "<<mStr[i]<<endl;
+            if(mStr[i]=='0'){
+                redMap+=(rStr[i]);
+               // cout<<rStr[i];
+            }
+                //redMap.erase(0,rStr[i]);
+        }
+        return redMap;
+}
+
