@@ -38,9 +38,15 @@ int main(int argc,char *argv[]){
     //string str= "NOW IS THE WINTER OF OUR DISCONTENT"
     cout<<"Begin execution"<<endl;
     string str="";
+    /*char flag;
     
-    //getline(cin,str);
-    str=getInput();
+    while((getline(cin,str))){
+        if(flag!='\n'){
+            break;
+        }
+    }
+    */
+   str=getInput();
 
         
     char Cstr[str.length()+1];
@@ -94,7 +100,12 @@ int main(int argc,char *argv[]){
        }
    }
     for(int z=0;z < freq1[z].letter; z++){
+        if(freq1[z].letter=='\n'){
+              cout<<"Symbol "<< "<EOL>"<< freq1[z].letter<<" frequency is "<<freq1[z].frequency<<endl;
+          }
+          else{
        cout<<freq1[z].letter<<" frequency is "<<freq1[z].frequency<<endl;
+          }
    }
     
     encode[0].que={str};
@@ -114,39 +125,51 @@ int main(int argc,char *argv[]){
     //cout<<"child process 3 is doing task 3"<<getpid()<<endl;
     cout<<endl;
     sleep(0);
-    pid_t pid;
+    pid_t pid,pidPar;
+    pidPar=getpid();
+    char parPD[6];
+    sprintf(parPD,"%d",pidPar);
+    
     cout<<"Original message: "<<encode[0].que<<endl;
     for(int i=1;i<zz;i++){
+        ofstream outputfile;
         pid = fork();
         if(pid == 0){
-            cout<<"Symbol "<< freq1[i].letter<<" code: "<<encode[i].huff<<endl;
-            cout<<"Remiaining code: "<<encode[i+1].que<<endl;
-            exit(0);
-        }
+            if(freq1[i].letter=='\n'){
+            //outputfile.open("%d");
+          //  outputfile<<"Symbol "<< "<EOL> "<< freq1[i].letter<<" code: "<<encode[i].huff<<endl;
+                cout<<"Symbol "<< "<EOL>"<< freq1[i].letter<<" code: "<<encode[i].huff<<endl;
+                cout<<"Remiaining code: "<<encode[i].que<<endl;
+                _exit(0);
+            }
+            else{
+                cout<<"Symbol "<< freq1[i].letter<<" code "<<encode[i].huff<<endl;
+                cout<<"Remiaining code: "<<encode[i].que<<endl;
+                _exit(0);
             //cout<<"Remiaining code: "<<encode[i].que<<endl;
-            //cout<<"Symbol "<< freq1[i].letter<<" code "<<encode[i].huff<<endl;
-        }  //cout<<freq1[i].letter<<endl;
-        wait(0);
-     
-     cout<<endl;
+           // outputfile<<"Symbol "<< freq1[i].letter<<" code "<<encode[i].huff<<endl;
+        }   //cout<<freq1[i].letter<<endl;
+        }
+    }
 
     
 return 0;
 }
 
 string getInput(){
-    
     string Input="";
     string str;
     string InputTemp="";
-    while (getline(cin,InputTemp)){
+    while(getline(cin,InputTemp)){
         Input+=InputTemp;
-        Input+= '\r';
+        Input+= '\n';
         if(InputTemp.length()==0)
             break;
     };
     str=Input;
     return str;
+    
+    return 0;
 }
 
 string mapH(string huff1,char toBeMapped){
